@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>精美js聊天窗口界面代码</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{static_url('css/reset.min.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/style.css')}}">
+    <script type="text/javascript" charset="utf-8" src="{{static_url('js/jquery.min.js')}}"></script>
+
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="left">
+                <div class="top">
+                    <input type="text" placeholder="Search" />
+                    <a href="javascript:;" class="search"></a>
+                </div>
+                <ul class="people">
+                    <li class="person" data-chat="person1">
+                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/thomas.jpg" alt="" />
+                        <span class="name">刘子哲大人</span>
+                        <span class="time">
+                            <script>
+                                var nowtime=new Date()
+                                document.write(nowtime.getHours()+':'+nowtime.getMinutes())
+                            </script>
+                        </span>
+                        <span class="preview">今天红烧徐淑萌</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="right">
+                <div class="top"><span>To: <span class="name">刘子哲大人</span></span></div>
+                <div class="chat" data-chat="person1" id="contents">
+                    <div class="conversation-start">
+                        <span>
+                            <script>
+                                var nowtime=new Date()
+                                document.write('Today, '+nowtime.getHours()+':'+nowtime.getMinutes()+'AM')
+                             </script>
+                        </span>
+                    </div>
+                </div>
+                <div class="write">
+                    <a href="javascript:;" class="write-link attach"></a>
+                    <input type="text" id="message"/>
+                    <a href="javascript:;" class="write-link smiley"></a>
+                    <a class="write-link send" onclick="sendMessage()"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="{{static_url('js/index.js')}}"></script>
+
+    <!--这行代码可以去掉-->
+    <a href="http://www.bootstrapmb.com" style="display:none">bootstrapmb</a>
+    <script>
+        //建立websocket链接
+
+
+        var ws= new WebSocket("ws://10.3.74.14:8002/chat")
+        ws.onmessage = function(e){
+            var json_data = jQuery.parseJSON(e.data)
+            if(json_data.message.indexOf("我说：")!=-1){
+                $('#contents').append('<div class="bubble me">'+json_data.message.slice(3)+"</div>")
+            }else{
+            $('#contents').append('<div class="bubble you">'+json_data.message.slice(3)+"</div>")
+            }
+        }
+        function sendMessage(){
+            var message = $('#message').val()
+            console.log(message)
+            ws.send(message)
+            $('#message').val("")
+        }
+    </script>
+</body>
+</html>

@@ -8,6 +8,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/home", index.HomeHandler),
             (r'/chat', index.ChatHandler),
+            (r'/person_num',index.PersonNumHandler)
 
         ]
 
